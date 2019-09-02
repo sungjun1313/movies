@@ -20,11 +20,21 @@ class Container extends Component{
     });
   };
 
-  handleSubmit = event => {
+  handleSubmit = async (event) => {
     const {login} = this.props;
     const {username, password} = this.state;
     event.preventDefault();
-    login(username, password);
+    const result = await login(username, password);
+    console.log(result);
+    if(result !== 'success'){
+      if(result.non_field_errors){
+        alert(result.non_field_errors);
+      }else if(result.username){
+        alert(`[아이디] ${result.username}`);
+      }else if(result.password){
+        alert(`[비밀번호] ${result.password}`);
+      }
+    }
   };
 
   render(){

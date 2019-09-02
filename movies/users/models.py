@@ -31,6 +31,7 @@ class User(AbstractUser):
     class Meta:
         ordering = ['-id']
 
+"""
 @receiver(models.signals.pre_save, sender=User)
 def auto_delete_file_on_change(sender, instance, **kwargs):
     if not instance.pk:
@@ -49,3 +50,4 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
     if instance.profile_image:
         if os.path.isfile(instance.profile_image.path):
             os.remove(instance.profile_image.path)
+"""

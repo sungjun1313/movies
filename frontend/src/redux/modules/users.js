@@ -1,5 +1,6 @@
 //import
 import {checkEnvReturnUrl} from '../../utils';
+import axios from 'axios';
 
 
 //action types
@@ -32,8 +33,32 @@ function logout(){
 
 //API actions
 function userLogin(username, password){
-  return dispatch => {
+  return async (dispatch) => {
     const url = checkEnvReturnUrl("/rest-auth/login/");
+
+    try{
+      const result = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            username,
+            password
+          })
+        });
+      const resultJson = await result.json();
+      //console.log(resultJson);
+      if(resultJson.token){
+        dispatch(saveToken(resultJson.token));
+        dispatch(setProfile(resultJson.user));
+        return 'success';
+      }
+      return resultJson;
+    }catch(err){
+      return err;
+    }
+    /*
     fetch(url, {
       method: "POST",
       headers: {
@@ -53,6 +78,7 @@ function userLogin(username, password){
       }
     })
     .catch(err => console.log(err));
+    */
   }
 }
 
@@ -73,6 +99,113 @@ function userLogout(){
     .catch(err => console.log(err));
   }
 }
+
+
+function passwordReset(email){
+  return async (dispatch) => {
+    const url = checkEnvReturnUrl("/rest-auth/password/reset/");
+    try{
+      const result = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email
+          })
+        });
+
+      const resultJson = await result.json();
+      if(result.ok){
+        return 'success';
+      }else{
+        return resultJson;
+      }
+    }catch(err){
+      return err;
+    }
+  }
+}
+
+function passwordResetConfirm(new_password1, new_password2, uid, token){
+  return async (dispatch) => {
+    const url = checkEnvReturnUrl("/rest-auth/password/reset/confirm/");
+    try{
+      const result = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            new_password1,
+            new_password2,
+            uid,
+            token
+          })
+        });
+      const resultJson = await result.json();
+      if(result.ok){
+        return 'success';
+      }else{
+        return resultJson;
+      }
+    }catch(err){
+      return err;
+    }
+  }
+}
+
+function createAccount(username, name, email, password1, password2, profile_image){
+  return async (dispatch) => {
+    //const url = checkEnvReturnUrl('/rest-auth/registration/');
+    const url = checkEnvReturnUrl('/users/register/');
+    /*
+    for(var pair of data.entries()){
+      console.log(pair[0]+', '+pair[1]);
+    }
+    */
+    try{
+
+      const fd = new FormData();
+
+      fd.append("username", username);
+      fd.append("name", name);
+      fd.append("email", email);
+      fd.append("password1", password1);
+      fd.append("password2", password2);
+      fd.append("profile_image", profile_image);
+      console.log(`${username} ${name} ${profile_image}`);
+      for(var pair of fd.entries()){
+        console.log(pair[0]+', '+pair[1]);
+      }
+
+      const result = await axios.post(url, fd, {headers:{"Content-Type":"application/json"}});
+
+        /*
+        body: JSON.stringify({
+          username,
+          name,
+          email,
+          password1,
+          password2,
+          profile_image
+        })
+        */
+
+      console.log(result);
+      const resultJson = await result.json();
+      if(resultJson.token){
+        dispatch(saveToken(resultJson.token));
+        dispatch(setProfile(resultJson.user));
+        return 'success';
+      }
+      return resultJson;
+    }catch(err){
+      return err;
+    }
+  }
+}
+
 
 
 //initial state
@@ -130,7 +263,10 @@ function applyLogout(state, action){
 //exports
 const actionCreators = {
   userLogin,
-  userLogout
+  userLogout,
+  passwordReset,
+  passwordResetConfirm,
+  createAccount,
 };
 
 export {actionCreators};

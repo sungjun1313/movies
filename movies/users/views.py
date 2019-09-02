@@ -5,6 +5,10 @@ from django.views.generic import DetailView, RedirectView, UpdateView
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 
+from rest_framework.parsers import JSONParser,  FormParser, MultiPartParser, FileUploadParser
+from rest_auth.registration.views import RegisterView
+from .serializers import SignUpSerializer
+
 User = get_user_model()
 
 
@@ -48,3 +52,24 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 
 user_redirect_view = UserRedirectView.as_view()
+
+class CustomRegisterView(RegisterView):
+    serializer_class = SignUpSerializer
+    #parser_classes = [MultiPartParser, FormParser, FileUploadParser]
+
+    def post(self, request, *args, **kwargs):
+        print(request.data)#POST, FILES, data
+        super(CustomRegisterView, self).post(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        print('bbbb')
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        print(serializer)
+        user = self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(self.get_response_data(user),
+                        status=status.HTTP_201_CREATED,
+                        headers=headers)
+

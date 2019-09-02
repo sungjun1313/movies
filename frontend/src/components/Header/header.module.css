@@ -6,6 +6,7 @@
   background-color: #333333;
   transition: height .3s linear;
   overflow: hidden;
+  z-index: 99;
 }
 
 .bigNav {
@@ -25,9 +26,13 @@
 
 .navLeft {
   width:300px;
+}
+
+.navLeft>a {
   font-size: 30px;
   line-height: 60px;
   color: #ffffff;
+  text-decoration: none;
 }
 
 .navRight {
@@ -56,8 +61,12 @@
   display: block;
   width: 100%;
   height: 100%;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
+}
+
+.active {
+  color: #ffffff;
 }
 
 
