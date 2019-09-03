@@ -9,7 +9,7 @@ class Container extends Component {
     email: '',
     password1: '',
     password2: '',
-    profile_image: '',
+    profile_image: null,
     show_image: ''
   };
 
@@ -21,26 +21,19 @@ class Container extends Component {
     const {target: {value, name}} = event;
     if(name === 'profile_image'){
       //이미지 보여주기
-      if(window.File && window.FileList && window.FileReader){
-        const files = event.target.files;
-        const file = files[0];
-        if(!file.type.match('image')){
-          alert('이미지 파일만 가능합니다');
-          return false;
-        }
-        console.log(file);
 
-        this.setState({
-          [name]: value,
-          show_image: URL.createObjectURL(file)
-        });
-      }else{
-        console.log('최신 크롬 브라우저를 설치해주세요.');
-        this.setState({
-          [name]: value
-        });
+      const files = event.target.files;
+      const file = files[0];
+      if(!file.type.match('image')){
+        alert('이미지 파일만 가능합니다');
+        return false;
       }
+      console.log(file);
 
+      this.setState({
+        [name]: file,
+        show_image: URL.createObjectURL(file)
+      });  
 
     }else{
       this.setState({

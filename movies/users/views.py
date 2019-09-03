@@ -5,9 +5,12 @@ from django.views.generic import DetailView, RedirectView, UpdateView
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.parsers import JSONParser,  FormParser, MultiPartParser, FileUploadParser
 from rest_auth.registration.views import RegisterView
-from .serializers import SignUpSerializer
+from .serializers import SignUpSerializer, ChangeProfileSerializer
 
 User = get_user_model()
 
@@ -72,4 +75,13 @@ class CustomRegisterView(RegisterView):
         return Response(self.get_response_data(user),
                         status=status.HTTP_201_CREATED,
                         headers=headers)
+
+class ChangeProfileView(APIView):
+    def put(self, request, *args, **kwargs):
+        user = request.user
+        serializer = ChangeProfileSerializer(user, data=request.data, partial=True)
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_200_OK)
 

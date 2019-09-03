@@ -1,6 +1,6 @@
 //import
 import {checkEnvReturnUrl} from '../../utils';
-import axios from 'axios';
+//import axios from 'axios';
 
 
 //action types
@@ -157,8 +157,8 @@ function passwordResetConfirm(new_password1, new_password2, uid, token){
 
 function createAccount(username, name, email, password1, password2, profile_image){
   return async (dispatch) => {
-    //const url = checkEnvReturnUrl('/rest-auth/registration/');
-    const url = checkEnvReturnUrl('/users/register/');
+    const url = checkEnvReturnUrl('/rest-auth/registration/');
+    //const url = checkEnvReturnUrl('/users/register/');
     /*
     for(var pair of data.entries()){
       console.log(pair[0]+', '+pair[1]);
@@ -179,7 +179,13 @@ function createAccount(username, name, email, password1, password2, profile_imag
         console.log(pair[0]+', '+pair[1]);
       }
 
-      const result = await axios.post(url, fd, {headers:{"Content-Type":"application/json"}});
+      const result = await fetch(url, {
+          method: "POST",
+          headers: {
+
+          },
+          body: fd
+        });
 
         /*
         body: JSON.stringify({
@@ -200,6 +206,98 @@ function createAccount(username, name, email, password1, password2, profile_imag
         return 'success';
       }
       return resultJson;
+    }catch(err){
+      return err;
+    }
+  }
+}
+
+function getProfile(){
+  return async (dispatch, getState) => {
+    const {users:{token}} = getState();
+    const url = checkEnvReturnUrl("/rest-auth/user/");
+    try{
+      const result = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `JWT ${token}`
+          }
+        });
+      console.log(result);
+      const resultJson = await result.json();
+      if(resultJson.username){
+        dispatch(setProfile(resultJson));
+        return 'success';
+      }
+      return resultJson;
+    }catch(err){
+      return err;
+    }
+
+  }
+
+}
+
+function changeProfile(name, email, profile_image, delete_image){
+  return async (dispatch, getState) => {
+    const {users: {token}} = getState();
+    const url = checkEnvReturnUrl("/users/change/");
+    try{
+        const fd = new FormData();
+        fd.append("name", name);
+        fd.append("email", email);
+        if(delete_image === 'y'){
+          fd.append("profile_image", "");
+        }else if(profile_image){
+          fd.append("profile_image", profile_image);
+        }
+
+
+        const result = await fetch(url, {
+            method: "PUT",
+            headers: {
+              "Authorization": `JWT ${token}`
+            },
+            body: fd
+          });
+        console.log(result);
+        //const resultJson = await result.json();
+        if(result.ok){
+          return 'success';
+        }else{
+          return result.json();
+        }
+
+    }catch(err){
+      return err;
+    }
+
+  }
+}
+
+function changePassword(old_password, new_password1, new_password2){
+  return async (dispatch, getState) => {
+    const {users: {token}} = getState();
+    const url = checkEnvReturnUrl("/rest-auth/password/change/");
+
+    try{
+      const result = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Authorization": `JWT ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          old_password,
+          new_password1,
+          new_password2
+        })
+      });
+      if(result.ok){
+        return 'success';
+      }
+      return result.json();
     }catch(err){
       return err;
     }
@@ -267,6 +365,9 @@ const actionCreators = {
   passwordReset,
   passwordResetConfirm,
   createAccount,
+  getProfile,
+  changeProfile,
+  changePassword,
 };
 
 export {actionCreators};

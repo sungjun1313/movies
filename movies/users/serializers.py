@@ -17,7 +17,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'profile_image',
             'username',
             'name',
-            'email'
+            'email',
+            'pk',
+            'date_joined',
+            'last_login'
         )
 
 
@@ -33,7 +36,7 @@ class SignUpSerializer(RegisterSerializer):
         return name
 
     def validate_profile_image(self, profile_image):
-        print(ccc)
+        print('ccc')
         profile_image = profile_image
         if profile_image:
             content_type = profile_image.content_type.split('/')[0]#content-type(ex image/jpg)에서 image만 끄집어낸다
@@ -67,3 +70,41 @@ class SignUpSerializer(RegisterSerializer):
         user.profile_image = self.cleaned_data.get('profile_image', '')
         user.save()
         return user
+
+class ChangeProfileSerializer(serializers.ModelSerializer):
+    def validate_name(self, name):
+        name = name
+        if not name:
+            raise serializers.ValidationError(_("이름은 필수항목입니다."))
+        return name
+
+    def validate_email(self, email):
+        email = email
+        if not email:
+            raise serializers.ValidationError(_("이메일은 필수항목입니다."))
+        users = User.objects.filter(email=email)
+        if users:
+            if self.instance not in users:
+                raise serializers.ValidationError(_("이메일이 중복되었습니다"))
+        return email
+
+
+    def validate_profile_image(self, profile_image):
+        print('ccc')
+        profile_image = profile_image
+        if profile_image:
+            content_type = profile_image.content_type.split('/')[0]#content-type(ex image/jpg)에서 image만 끄집어낸다
+            if content_type in settings.CONTENT_TYPES:
+                if int(profile_image.size) > int(settings.MAX_UPLOAD_SIZE):
+                    raise serializers.ValidationError(_("%s 보다 큰 파일은 저장할 수 없습니다.") % (filesizeformat(settings.MAX_UPLOAD_SIZE)))
+            else:
+                raise serializers.ValidationError(_("이미지 파일만 저장할 수 있습니다."))
+        return profile_image
+
+    class Meta:
+        model = User
+        fields = (
+            'name',
+            'email',
+            'profile_image'
+        )

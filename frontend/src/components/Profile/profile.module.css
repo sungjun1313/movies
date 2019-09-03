@@ -1,0 +1,88 @@
+.container {
+  width: 400px;
+  height: 400px;
+  margin: auto;
+  margin-top: 120px;
+  margin-bottom: 120px;
+  padding: 20px;
+  box-shadow: 1px 1px 6px #000000;
+  background-color: #ffffff;
+}
+
+.headerStyle {
+  text-align: center;
+  font-size: 1.6em;
+}
+
+.infoBox {
+  width: 100%;
+}
+
+.infoLeft, .infoRight {
+  float: left;
+  width: 48%;
+}
+
+.infoRight {
+  padding-left: 15px;
+}
+
+.circleBox {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  -moz-border-radius: 80px;
+  -webkit-border-radius: 80px;
+  border-radius: 80px;
+  overflow: hidden;
+  margin:auto;
+}
+
+.circleBox>img {
+  width: 60%;
+  min-width: 200px;
+  min-height: 200px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.infoRight>div {
+  margin-bottom: 10px;
+}
+
+.contentTitle {
+  font-weight: bold;
+}
+
+.btnBox {
+  clear: both;
+  padding-top: 20px;
+  text-align: center;
+}
+
+.btnBox>a {
+  padding: 7px;
+  background-color: #4caf50;
+  text-decoration: none;
+  color: #ffffff;
+  margin-left: 20px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+
+@media all and (max-width: 600px){
+  .container {
+    width: 80%;
+    height: auto;
+  }
+
+  .infoLeft, .infoRight {
+    float: none;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+}
