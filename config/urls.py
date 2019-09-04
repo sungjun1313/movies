@@ -14,6 +14,7 @@ urlpatterns = [
     path("rest-auth/", include('rest_auth.urls')),
     path("rest-auth/registration/", include('rest_auth.registration.urls')),
     path("password/reset/confirm/<uidb64>/<token>/", TemplateView.as_view(template_name="build/index.html"), name="password_reset_confirm"),
+    path("movies/", include('movies.cinema.urls', namespace="movies")),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management

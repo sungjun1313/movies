@@ -61,6 +61,19 @@ class Container extends Component {
     }
   };
 
+  componentDidUpdate = (prevProps, prevState) => {
+    console.log('update');
+    const {profile} = this.props;
+    if(profile !== prevProps.profile){
+
+      this.setState({
+        name: profile.name,
+        email: profile.email,
+        profile_image: profile.profile_image
+      });
+    }
+  };
+
   handleInputChange = event => {
     const {target: {value, name}} = event;
     if(name === 'profile_image'){
@@ -127,8 +140,8 @@ class Container extends Component {
 
   render(){
     const {name, email, profile_image, show_image, delete_image, success, loading} = this.state;
-    const {profile} = this.props;
-    //console.log(delete_image);
+    //const {profile} = this.props;
+    //console.log(Profile);
 
     if(success){
       return <Redirect to="/profile/" />
@@ -140,14 +153,13 @@ class Container extends Component {
 
     return (
       <ChangeProfile
-        nameValue={name}
-        emailValue={email}
-        profile_imageValue={profile_image}
+        name={name}
+        email={email}
+        profile_image={profile_image}
         show_image={show_image}
         delete_image={delete_image}
         handleSubmit={this.handleSubmit}
         handleInputChange={this.handleInputChange}
-        {...profile}
        />
     );
   };

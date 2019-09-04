@@ -18,7 +18,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'username',
             'name',
             'email',
-            'pk',
+            'id',
             'date_joined',
             'last_login'
         )
@@ -107,4 +107,19 @@ class ChangeProfileSerializer(serializers.ModelSerializer):
             'name',
             'email',
             'profile_image'
+        )
+
+
+class BasicUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'username',
+            'profile_image',
+            'id'
+        )
+        read_only_fields = (
+            'username',
+            'profile_image',
+            'id'
         )

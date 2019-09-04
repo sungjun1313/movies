@@ -115,11 +115,11 @@ function passwordReset(email){
           })
         });
 
-      const resultJson = await result.json();
+      //const resultJson = await result.json();
       if(result.ok){
         return 'success';
       }else{
-        return resultJson;
+        return result.json();
       }
     }catch(err){
       return err;
@@ -143,11 +143,11 @@ function passwordResetConfirm(new_password1, new_password2, uid, token){
             token
           })
         });
-      const resultJson = await result.json();
+      //const resultJson = await result.json();
       if(result.ok){
         return 'success';
       }else{
-        return resultJson;
+        return result.json();
       }
     }catch(err){
       return err;
@@ -250,7 +250,10 @@ function changeProfile(name, email, profile_image, delete_image){
         if(delete_image === 'y'){
           fd.append("profile_image", "");
         }else if(profile_image){
-          fd.append("profile_image", profile_image);
+          if(typeof profile_image === 'object'){
+            fd.append("profile_image", profile_image);
+          }
+
         }
 
 

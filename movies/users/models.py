@@ -23,7 +23,7 @@ class User(AbstractUser):
     profile_image = models.ImageField(_("프로필사진"), blank=True, null=True, upload_to=get_img_name)
 
     def __str__(self):
-        return self.name
+        return self.username
 
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})
@@ -51,3 +51,23 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
         if os.path.isfile(instance.profile_image.path):
             os.remove(instance.profile_image.path)
 """
+
+@receiver(models.signals.post_delete, sender=User)
+def auto_delete_file(sender, instance, **kwargs):
+    if instance.profile_image:
+        instance.profile_image.delete(save=False)
+
+
+@receiver(models.signals.pre_save, sender=User)
+def auto_delete_file_on_change(sender, instance, **kwargs):
+    if not instance.pk:
+        return False
+
+    try:
+        old_file = User.objects.get(pk=instance.pk).profile_image
+    except User.DoesNotExist:
+        return False
+
+    new_file = instance.profile_image
+    if not old_file == new_file:
+        old_file.delete(save=False)
