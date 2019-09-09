@@ -1,0 +1,19 @@
+.container {
+  width: 100%;
+}
+
+.btnBox {
+  list-style: none;
+  text-align: right;
+  padding-right: 10%;
+}
+
+.btnBox>li {
+  display: inline-block;
+  width: 40px;
+  height: 30px;
+}
+
+.active {
+  font-weight: bold;
+}

@@ -11,6 +11,7 @@ class InputReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = (
             'grade',
+            'body',
         )
 
 
@@ -18,7 +19,7 @@ class InputReviewSerializer(serializers.ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     user = BasicUserSerializer(read_only=True)
-    #isMine = serializers.SerializerMethodField()
+    isMine = serializers.SerializerMethodField()
 
     class Meta:
         model = Review
@@ -27,20 +28,20 @@ class ReviewSerializer(serializers.ModelSerializer):
             'user',
             'cinema',
             'grade',
-            #'isMine',
+            'body',
+            'isMine',
             'created',
             'modified'
         )
 
-    """
-    id로 비교하는 것이 낫다.
+
     def get_isMine(self, obj):
         if 'request' in self.context:
             request = self.context['request']
-            if obj.id == request.user.id:
+            if obj.user.id == request.user.id:
                 return True
         return False
-    """
+
 
 #Listview에서는 prefetch 안 써도 됨
 class CinemaListSerializer(serializers.ModelSerializer):
@@ -54,13 +55,14 @@ class CinemaListSerializer(serializers.ModelSerializer):
             'director',
             'actor',
             'average_grade',
+            'total_reviews',
             'id',
         )
 
 class CinemaDetailSerializer(serializers.ModelSerializer):
 
-    cinema_reviews = ReviewSerializer(many=True, read_only=True)
-    #cinema_reviews = serializers.SerializerMethodField()
+    #cinema_reviews = ReviewSerializer(many=True, read_only=True)
+    cinema_reviews = serializers.SerializerMethodField()
 
     class Meta:
         model = Cinema
@@ -72,8 +74,14 @@ class CinemaDetailSerializer(serializers.ModelSerializer):
             'director',
             'actor',
             'average_grade',
+            'total_reviews',
             'cinema_reviews'
         )
+
+    def get_cinema_reviews(self, obj):
+        if 'request' in self.context:
+            return ReviewSerializer(obj.cinema_reviews.all() ,many=True, read_only=True, context={'request': self.context['request']}).data
+        return ReviewSerializer(obj.cinema_reviews.all() ,many=True, read_only=True).data
 
     """
     def __init__(self, *args, **kwargs):

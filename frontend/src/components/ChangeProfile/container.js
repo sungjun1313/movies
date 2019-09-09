@@ -37,7 +37,7 @@ class Container extends Component {
     profile_image: null,
     show_image: '',
     delete_image: 'n',
-    loading: false
+    loaded: false
   }
 
   static propTypes = {
@@ -50,14 +50,18 @@ class Container extends Component {
     const {getProfile} = this.props;
 
     const result = await getProfile();
+    /*
     if(result !== 'success'){
       alert(result);
     }
+    */
 
     if(result === 'success'){
       this.setState({
-        loading: true
+        loaded: true
       });
+    }else{
+      alert(result);
     }
   };
 
@@ -131,6 +135,7 @@ class Container extends Component {
         alert(`네트워크가 불안정합니다`);
       }
     }
+
     if(result === 'success'){
       this.setState({
         success: true
@@ -139,7 +144,7 @@ class Container extends Component {
   }
 
   render(){
-    const {name, email, profile_image, show_image, delete_image, success, loading} = this.state;
+    const {name, email, profile_image, show_image, delete_image, success, loaded} = this.state;
     //const {profile} = this.props;
     //console.log(Profile);
 
@@ -147,7 +152,7 @@ class Container extends Component {
       return <Redirect to="/profile/" />
     }
 
-    if(!loading){
+    if(!loaded){
       return <h3>로딩중입니다.</h3>;
     }
 

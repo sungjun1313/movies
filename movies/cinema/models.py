@@ -31,7 +31,14 @@ class Cinema(models.Model):
 
     @property
     def average_grade(self):
-        return self.cinema_reviews.aggregate(Avg('grade'))['grade__avg']
+        avg = self.cinema_reviews.aggregate(Avg('grade'))['grade__avg']
+        if avg:
+            return round(avg, 2)
+        return 0
+
+    @property
+    def total_reviews(self):
+        return self.cinema_reviews.count()
 
     class Meta:
         ordering = ['-id']
@@ -41,6 +48,7 @@ class Review(models.Model):
     user = models.ForeignKey(User, verbose_name=_('유저'),on_delete=models.CASCADE, related_name='user_reviews')
     cinema = models.ForeignKey(Cinema, verbose_name=_('영화'), on_delete=models.CASCADE, related_name='cinema_reviews')
     grade = models.IntegerField(verbose_name=_('평점'))
+    body = models.TextField(verbose_name=_("후기"), max_length=500)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 

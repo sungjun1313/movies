@@ -1,0 +1,84 @@
+.container {
+  width : 80%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin: auto;
+  padding: 10px;
+}
+
+.container>form {
+  width: 100%;
+  margin: 10px auto;
+  text-align: right;
+  padding-right: 10%;
+}
+
+.container>form> a {
+  text-decoration: none;
+  color: #ffffff;
+  padding: 2px;
+  background-color: #4caf50;
+  margin-left: 10px;
+  border-radius: 4px;
+}
+
+
+.movieBox {
+  flex: 0 1 auto;
+  width: 40%;
+  min-width: 400px;
+  height: 300px;
+  box-shadow: 2px 2px 3px #555555;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  margin-right: auto;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+}
+
+.movieBox img {
+  height: 80%;
+  box-shadow: 2px 2px 5px #555555;
+}
+
+@media all and (max-width: 1030px){
+  .movieBox {
+    width: 90%;
+    margin: auto;
+    margin-bottom: 20px;
+  }
+}
+
+@media all and (max-width: 800px){
+  .container {
+    width: 95%;
+    flex-direction: column;
+  }
+
+  .movieBox {
+    max-width: 100%;
+    min-width: 300px;
+    height: 450px;
+  }
+
+}
+
+@media all and (max-width: 550px){
+  .movieBox img {
+    height: 52%;
+  }
+
+  .movieBox>div {
+    width: 100%;
+  }
+
+  .movieBox>div>h3, .movieBox>div>div {
+    margin: auto;
+    padding-left: 40px;
+  }
+}

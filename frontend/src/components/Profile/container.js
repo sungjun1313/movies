@@ -5,7 +5,7 @@ import Profile from './presenter';
 class Container extends Component{
 
   state = {
-    loading: false
+    loaded: false
   }
 
   static propTypes = {
@@ -17,19 +17,24 @@ class Container extends Component{
     const {getProfile} = this.props;
 
     const result = await getProfile();
+    /*
     if(result !== 'success'){
       alert(result);
     }
+    */
     if(result === 'success'){
       this.setState({
-        loading: true
+        loaded: true
       });
+    }else{
+      alert(result);
     }
+
   };
 
   render(){
-    const {loading} = this.state;
-    if(!loading){
+    const {loaded} = this.state;
+    if(!loaded){
       return <h3>로딩중입니다.</h3>
     }
     const {profile} = this.props;

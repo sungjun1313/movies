@@ -225,6 +225,10 @@ function getProfile(){
           }
         });
       console.log(result);
+      if(result.status === 401){
+        dispatch(logout());
+      }
+
       const resultJson = await result.json();
       if(resultJson.username){
         dispatch(setProfile(resultJson));
@@ -265,6 +269,11 @@ function changeProfile(name, email, profile_image, delete_image){
             body: fd
           });
         console.log(result);
+
+        if(result.status === 401){
+          dispatch(logout());
+        }
+
         //const resultJson = await result.json();
         if(result.ok){
           return 'success';
@@ -297,6 +306,11 @@ function changePassword(old_password, new_password1, new_password2){
           new_password2
         })
       });
+
+      if(result.status === 401){
+        dispatch(logout());
+      }
+
       if(result.ok){
         return 'success';
       }
@@ -365,6 +379,7 @@ function applyLogout(state, action){
 const actionCreators = {
   userLogin,
   userLogout,
+  logout,
   passwordReset,
   passwordResetConfirm,
   createAccount,

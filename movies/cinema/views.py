@@ -2,12 +2,15 @@ from django.db.models import Q
 
 
 from rest_framework import generics
+from rest_framework import status
+from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.serializers import ValidationError
 
 
 from .models import Cinema, Review
-from .serializers import CinemaListSerializer, CinemaDetailSerializer
+from .serializers import CinemaListSerializer, CinemaDetailSerializer, ReviewSerializer
 
 
 # Create your views here.
@@ -34,10 +37,63 @@ get token 필요 /movies/detail/1/
 class CinemaDetailAPIView(generics.RetrieveAPIView):
     queryset = Cinema.objects.prefetch_related('cinema_reviews__user').all()#DB 최적화
     serializer_class = CinemaDetailSerializer
-    permission_classes = [AllowAny]#임시 django-debug 테스트용
+    #permission_classes = [AllowAny]#임시 django-debug 테스트용
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        #serializer = self.get_serializer(instance, context={'request': request})
-        serializer = self.get_serializer(instance)
+        serializer = self.get_serializer(instance, context={'request': request})
+        #serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+
+class ReviewCreateAPIView(APIView):
+
+    def post(self, request, *args, **kwargs):
+        try:
+            existing_review = Review.objects.get(user__id=request.user.id, cinema__id=request.data['cinema_id'])
+            #return Response(data={'detail': '이미 작성한 리뷰가 있습니다,'},status=status.HTTP_304_NOT_MODIFIED)
+            raise ValidationError("이미 작성한 리뷰가 있습니다.")
+        except Review.DoesNotExist:
+            try:
+                data = request.data
+                cinema=Cinema.objects.get(id=data['cinema_id'])
+                new_review = Review.objects.create(
+                    user=request.user,
+                    cinema=cinema,
+                    grade=data['grade'],
+                    body=data['body'],
+                )
+
+                serializer = ReviewSerializer(new_review, context={'request': request})
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except Cinema.DoesNotExist:
+                raise ValidationError("존재하지 않은 게시글입니다.")
+
+
+class ReviewUpdateAPIView(APIView):
+    def put(self, request, review_id, *args, **kwargs):
+        try:
+            review = Review.objects.get(id=review_id)
+            data = request.data
+            if int(data['cinema_id']) != int(review.cinema.id) or int(request.user.id) != int(review.user.id):
+                raise ValidationError("권한이 없습니다.")
+            review.grade = data['grade']
+            review.body = data['body']
+            review.save()
+            serializer = ReviewSerializer(review, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Review.DoesNotExist:
+            raise ValidationError("존재하지 않는 리뷰입니다.")
+
+
+class ReviewDeleteAPIView(APIView):
+    def delete(self, request, review_id, *args, **kwargs):
+        try:
+            review = Review.objects.get(id=review_id)
+            data = request.data
+            if int(data['cinema_id']) != int(review.cinema.id) or int(request.user.id) != int(review.user.id):
+                raise ValidationError("권한이 없습니다.")
+            review.delete()
+            return Response(status=status.HTTP_200_OK)
+        except Review.DoesNotExist:
+            raise ValidationError("존재하지 않는 리뷰입니다.")

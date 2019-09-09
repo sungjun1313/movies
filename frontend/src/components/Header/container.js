@@ -29,7 +29,7 @@ class Container extends  Component{
     });
   }
 
-  menuClick = (e) => {
+  menuClick = async (e) => {
     //console.log(e.target.name);
 
     this.setState(prevState => {
@@ -51,18 +51,37 @@ class Container extends  Component{
       }
     }
 
+
+    if(e.target.name === 'main'){
+      const {getMovieList} = this.props;
+      const result = await getMovieList(1, '');
+      if(result !== 'success'){
+        if(result.detail){
+          alert(result.detail);
+        }else{
+          alert('네트워크가 불안정합니다.');
+        }
+      }
+    }
+
   }
+
 
   render(){
     const {width, menuOpen} = this.state;
     const {isLogin} = this.props;
-    const isMobile = width < 900;
+    const isMobile = width <= 800;
 
     return (
       <Fragment>
         {/*header fixed 속성때문에 임시로 넓혀놓음*/}
         <div style={{marginTop:'60px'}}></div>
-        <Header isLogin={isLogin} isMobile={isMobile} menuOpen={menuOpen}  menuClick={this.menuClick}  />
+        <Header
+          isLogin={isLogin}
+          isMobile={isMobile}
+          menuOpen={menuOpen}
+          menuClick={this.menuClick}
+        />
       </Fragment>
     );
   }
