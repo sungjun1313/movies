@@ -15,6 +15,7 @@ import ResetPasswordConfirm from '../ResetPasswordConfirm';
 import Profile from '../Profile';
 import MovieList from '../MovieList';
 import MovieDetail from '../MovieDetail';
+import ErrorPage from '../Error/404';
 
 const Main = props => (
   <BrowserRouter>
@@ -30,7 +31,8 @@ const Main = props => (
         <PrivateRoute exact path="/profile/" isLogin={props.isLogin} component={Profile} />
         <PrivateRoute exact path="/change/profile/" isLogin={props.isLogin} component={ChangeProfile} />
         <PrivateRoute exact path="/change/password/" isLogin={props.isLogin} component={ChangePassword}  />
-        <PrivateRoute exact path="/detail/" isLogin={props.isLogin} component={MovieDetail} />
+        <PrivateRoute exact path="/detail/:id/" isLogin={props.isLogin} component={MovieDetail} />
+        <Route component={ErrorPage} />
       </Switch>
       <Footer />
     </ScrollToTop>

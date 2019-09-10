@@ -74,6 +74,7 @@ class CinemaDetailSerializer(serializers.ModelSerializer):
             'director',
             'actor',
             'average_grade',
+            'story',
             'total_reviews',
             'cinema_reviews'
         )

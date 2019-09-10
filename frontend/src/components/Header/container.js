@@ -1,5 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
+import {withRouter} from 'react-router-dom';
+import queryString from 'query-string';
 
 import Header from './presenter';
 
@@ -31,15 +33,21 @@ class Container extends  Component{
 
   menuClick = async (e) => {
     //console.log(e.target.name);
-
+    /*
     this.setState(prevState => {
       const {menuOpen} = prevState;
-
-      return {
-        menuOpen: !menuOpen
+      if(e.target.name === 'main'){
+        return {
+          menuOpen: false
+        }
+      }else{
+        return {
+          menuOpen: !menuOpen
+        }
       }
 
     });
+    */
 
     if(e.target.name === 'logout'){
       e.preventDefault();
@@ -53,15 +61,31 @@ class Container extends  Component{
 
 
     if(e.target.name === 'main'){
-      const {getMovieList} = this.props;
-      const result = await getMovieList(1, '');
-      if(result !== 'success'){
-        if(result.detail){
-          alert(result.detail);
-        }else{
-          alert('네트워크가 불안정합니다.');
+      this.setState({
+        menuOpen: false
+      });
+      //console.log(window.location.pathname);
+      const currentPath = window.location.pathname;
+      const query = queryString.parse(this.props.location.search);
+      //console.log(query);
+      if(currentPath === '/'){
+        e.preventDefault();
+        if(query['search'] || query['page']){
+          this.props.history.push('/');
         }
+        window.location.reload();
       }
+
+    }else{
+      console.log('vfvf');
+      this.setState(prevState => {
+        const {menuOpen} = prevState;
+
+        return {
+          menuOpen: !menuOpen
+        }
+
+      });
     }
 
   }
@@ -75,7 +99,7 @@ class Container extends  Component{
     return (
       <Fragment>
         {/*header fixed 속성때문에 임시로 넓혀놓음*/}
-        <div style={{marginTop:'60px'}}></div>
+        <div style={{height:'60px'}}></div>
         <Header
           isLogin={isLogin}
           isMobile={isMobile}
@@ -87,4 +111,4 @@ class Container extends  Component{
   }
 }
 
-export default Container;
+export default withRouter(Container);

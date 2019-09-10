@@ -12,7 +12,7 @@ const Header = props => (
       <div className={styles.navLeft}>
         <Link to="/" onClick={props.menuClick} name="main">로고</Link>
 
-        <MdMenu className={styles.menuBtn} fontSize="40px" color="#ffffff" onClick={props.menuClick} />
+        <MdMenu className={styles.menuBtn} fontSize="40px" color="#ffffff" onClick={props.menuClick} name="menuBtn" />
       </div>
 
       {!props.isLogin && (

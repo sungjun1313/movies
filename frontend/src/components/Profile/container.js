@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Profile from './presenter';
+import Loading from '../Loading';
 
 class Container extends Component{
 
@@ -35,7 +36,7 @@ class Container extends Component{
   render(){
     const {loaded} = this.state;
     if(!loaded){
-      return <h3>로딩중입니다.</h3>
+      return <Loading />;
     }
     const {profile} = this.props;
     console.log(profile);

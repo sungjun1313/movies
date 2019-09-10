@@ -27,23 +27,24 @@ function setMovieDetail(movie){
   };
 };
 
-function createReview(review){
+function createReview(payload){
   return {
     type: CREATE_REVIEW,
-    review
+    payload
   };
 };
 
-function updateReview(review){
+function updateReview(payload){
   return {
     type: UPDATE_REVIEW,
-    review
+    payload
   };
 };
 
-function deleteReview(review_id){
+function deleteReview(payload, review_id){
   return {
     type: DELETE_REVIEW,
+    payload,
     review_id
   };
 };
@@ -111,12 +112,14 @@ function getMovieDetail(id){
         dispatch(userActions.logout());
       }
 
+      const resultJson = await result.json();
+      console.log(resultJson);
+
       if(result.ok){
-        console.log(result.data);
-        dispatch(setMovieDetail(result.data));
+        dispatch(setMovieDetail(resultJson));
         return 'success';
       }else{
-        return result.json();
+        return resultJson;
       }
 
     }catch(err){
@@ -146,11 +149,14 @@ function createReviewAction(cinema_id, grade, body){
         dispatch(userActions.logout());
       }
 
+      const resultJson = await result.json();
+      console.log(resultJson);
+
       if(result.ok){
-        dispatch(createReview(result.data));
+        dispatch(createReview(resultJson));
         return 'success';
       }else{
-        return result.json();
+        return resultJson;
       }
     }catch(err){
       console.log(err);
@@ -179,11 +185,14 @@ function updateReviewAction(id, cinema_id, grade, body){
         dispatch(userActions.logout());
       }
 
+      const resultJson = await result.json();
+      console.log(resultJson);
+
       if(result.ok){
-        dispatch(updateReview(result.data));
+        dispatch(updateReview(resultJson));
         return 'success';
       }else{
-        return result.json();
+        return resultJson;
       }
     }catch(err){
       console.log(err);
@@ -210,11 +219,13 @@ function deleteReviewAction(id, cinema_id){
         dispatch(userActions.logout());
       }
 
+      const resultJson = await result.json();
+      console.log(resultJson);
       if(result.ok){
-        dispatch(deleteReview(id));
+        dispatch(deleteReview(resultJson, id));
         return 'success';
       }else{
-        return result.json();
+        return resultJson;
       }
     }catch(err){
       console.log(err);
@@ -272,13 +283,15 @@ function applySetMovieDetail(state, action){
 };
 
 function applyCreateReview(state, action){
-  const {review} = action;
+  const {payload} = action;
   const newCinemaReview = [
-    {...review},
+    {...payload.review},
     ...state.movie_detail.cinema_reviews
   ];
   const newMovieDetail = {
     ...state.movie_detail,
+    average_grade: payload.avg,
+    total_reviews: payload.count,
     cinema_reviews: newCinemaReview
   };
   return {
@@ -288,15 +301,17 @@ function applyCreateReview(state, action){
 };
 
 function applyUpdateReview(state, action){
-  const {review} = action;
+  const {payload} = action;
   const newCinemaReview = state.movie_detail.cinema_reviews.map(existingReview => {
-    if(existingReview.id === review.id){
-      return {...review};
+    if(existingReview.id === payload.review.id){
+      return {...payload.review};
     }
     return existingReview;
   });
   const newMovieDetail = {
     ...state.movie_detail,
+    average_grade: payload.avg,
+    total_reviews: payload.count,
     cinema_reviews: newCinemaReview
   };
   return {
@@ -306,12 +321,14 @@ function applyUpdateReview(state, action){
 };
 
 function applyDeleteReview(state, action){
-  const {review_id} = action;
+  const {review_id, payload} = action;
   const newCinemaReview = state.movie_detail.cinema_reviews.filter(existingReview => {
     return existingReview.id !== review_id;
   });
   const newMovieDetail = {
     ...state.movie_detail,
+    average_grade: payload.avg,
+    total_reviews: payload.count,
     cinema_reviews: newCinemaReview
   };
   return {

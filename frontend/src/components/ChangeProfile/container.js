@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import ChangeProfile from './presenter';
 import {Redirect} from 'react-router-dom';
 
+import Loading from '../Loading';
+
 class Container extends Component {
   /*
   constructor(props){
@@ -153,7 +155,7 @@ class Container extends Component {
     }
 
     if(!loaded){
-      return <h3>로딩중입니다.</h3>;
+      return <Loading />;
     }
 
     return (

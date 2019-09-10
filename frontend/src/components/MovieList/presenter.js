@@ -5,7 +5,7 @@ import styles from './movieList.module.css';
 import noMovies from '../Images/noMovies.jpg';
 
 const MovieList = (props) => (
-  <div className={styles.movieBox}>
+  <div className={styles.movieBox} onClick={props.movieBoxClick} name="box">
     {props.poster_image ? <img src={props.poster_image} alt="영화포스트" /> : <img src={noMovies} alt="영화포스타" />}
     <div>
       <h3>{props.title}</h3>
@@ -27,6 +27,7 @@ MovieList.propTypes = {
   average_grade: PropTypes.number,
   total_reviews: PropTypes.number,
   id: PropTypes.number.isRequired,
+  movieBoxClick: PropTypes.func.isRequired
 };
 
 export default MovieList;

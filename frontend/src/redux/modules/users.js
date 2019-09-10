@@ -173,11 +173,17 @@ function createAccount(username, name, email, password1, password2, profile_imag
       fd.append("email", email);
       fd.append("password1", password1);
       fd.append("password2", password2);
-      fd.append("profile_image", profile_image);
+      if(profile_image){
+        if(typeof profile_image === 'object'){
+          fd.append("profile_image", profile_image);
+        }
+      }
+      /*
       console.log(`${username} ${name} ${profile_image}`);
       for(var pair of fd.entries()){
         console.log(pair[0]+', '+pair[1]);
       }
+      */
 
       const result = await fetch(url, {
           method: "POST",

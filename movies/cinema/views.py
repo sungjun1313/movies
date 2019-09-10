@@ -57,6 +57,7 @@ class ReviewCreateAPIView(APIView):
             try:
                 data = request.data
                 cinema=Cinema.objects.get(id=data['cinema_id'])
+
                 new_review = Review.objects.create(
                     user=request.user,
                     cinema=cinema,
@@ -65,7 +66,7 @@ class ReviewCreateAPIView(APIView):
                 )
 
                 serializer = ReviewSerializer(new_review, context={'request': request})
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(data={"review":serializer.data, "avg":cinema.average_grade, "count":cinema.total_reviews}, status=status.HTTP_201_CREATED)
             except Cinema.DoesNotExist:
                 raise ValidationError("존재하지 않은 게시글입니다.")
 
@@ -73,7 +74,7 @@ class ReviewCreateAPIView(APIView):
 class ReviewUpdateAPIView(APIView):
     def put(self, request, review_id, *args, **kwargs):
         try:
-            review = Review.objects.get(id=review_id)
+            review = Review.objects.select_related('cinema').get(id=review_id)
             data = request.data
             if int(data['cinema_id']) != int(review.cinema.id) or int(request.user.id) != int(review.user.id):
                 raise ValidationError("권한이 없습니다.")
@@ -81,7 +82,7 @@ class ReviewUpdateAPIView(APIView):
             review.body = data['body']
             review.save()
             serializer = ReviewSerializer(review, context={'request': request})
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(data={"review":serializer.data, "avg":review.cinema.average_grade, "count": review.cinema.total_reviews}, status=status.HTTP_200_OK)
         except Review.DoesNotExist:
             raise ValidationError("존재하지 않는 리뷰입니다.")
 
@@ -89,11 +90,11 @@ class ReviewUpdateAPIView(APIView):
 class ReviewDeleteAPIView(APIView):
     def delete(self, request, review_id, *args, **kwargs):
         try:
-            review = Review.objects.get(id=review_id)
+            review = Review.objects.select_related('cinema').get(id=review_id)
             data = request.data
             if int(data['cinema_id']) != int(review.cinema.id) or int(request.user.id) != int(review.user.id):
                 raise ValidationError("권한이 없습니다.")
             review.delete()
-            return Response(status=status.HTTP_200_OK)
+            return Response(data={"avg":review.cinema.average_grade, "count":review.cinema.total_reviews},status=status.HTTP_200_OK)
         except Review.DoesNotExist:
             raise ValidationError("존재하지 않는 리뷰입니다.")

@@ -15,7 +15,7 @@ const Pagination = (props) => {
 
   let current_page = 1;
   const num_btns = 3; //버튼 수
-  if(queryPage){
+  if(typeof Number(queryPage) === 'number' && queryPage > 0){
     current_page = queryPage;
   }
 
@@ -69,7 +69,7 @@ const Pagination = (props) => {
       </div>
     );
   }else{
-    console.log(current_page);
+    //console.log(current_page);
     return (
       <div className={styles.container}>
         <nav>

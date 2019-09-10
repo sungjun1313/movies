@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import MovieList from './presenter';
 import Pagination from '../Common/pagination';
 import styles from './movieList.module.css';
+import Loading from '../Loading';
 
 class Container extends Component {
   state = {
@@ -100,14 +101,33 @@ class Container extends Component {
   linkClick = async () => {
     const {getMovieList} = this.props;
     const {inputSearch} = this.state;
+    this.setState({
+      loaded: false
+    });
 
     const result = await getMovieList(1, inputSearch);
-    if(result !== 'success'){
+    if(result === 'success'){
+      /*
+      this.setState({
+        inputSearch: ''
+      });
+      */
+    }else{
       if(result.detail){
         alert(result.detail);
       }else{
-        alert('네트워크가 불안정합니다');
+        alert('네트워크가 불안정합니다.');
       }
+    }
+
+  }
+
+  handleKeyDown = (e) => {
+    if(e.key === 'Enter'){
+
+      //console.log(this.searchBtn);
+      this.props.history.push(this.searchBtn.props.to);
+      this.searchBtn.props.onClick();
     }
   }
 
@@ -115,6 +135,9 @@ class Container extends Component {
     const {getMovieList} = this.props;
     const page = event.target.parentElement.dataset.page;
     const search = event.target.parentElement.dataset.search;
+    this.setState({
+      loaded: false
+    });
     const result = await getMovieList(page, search);
     if(result !== 'success'){
       if(result.detail){
@@ -125,10 +148,22 @@ class Container extends Component {
     }
   }
 
+  movieBoxClick = (id) => {
+    const {isLogin} = this.props;
+    if(isLogin){
+        this.props.history.push(`/detail/${id}/`);
+    }else{
+      if(window.confirm('로그인이 필요한 서비스입니다. 로그인 하시겠습니까?')){
+        this.props.history.push('/login/')
+      }
+    }
+
+  }
+
   render(){
     const {loaded, inputSearch} = this.state;
     if(!loaded){
-        return <h3>로딩 중입니다.</h3>;
+        return <Loading />;
     }
 
     const {movie_list, page_count} = this.props;
@@ -137,11 +172,11 @@ class Container extends Component {
     return (
       <div className={styles.container}>
         <form onSubmit={this.handleSubmit}>
-          <input type="text" name="inputSearch" value={inputSearch} onChange={this.handleInputChange} />
-          <Link to={inputSearch ? `/?page=1&search=${inputSearch}` : `/?page=1`} onClick={this.linkClick}>검색</Link>
+          <input type="text" name="inputSearch" value={inputSearch} onChange={this.handleInputChange} onKeyDown={this.handleKeyDown} />
+          <Link to={inputSearch ? `/?page=1&search=${inputSearch}` : `/?page=1`} onClick={this.linkClick} ref={ref => {this.searchBtn = ref;}}>검색</Link>
         </form>
         {movie_list.map(movie => {
-          return <MovieList {...movie} key={movie.id} />
+          return <MovieList {...movie} key={movie.id} movieBoxClick={() => {this.movieBoxClick(movie.id)}} />
         })}
 
         <Pagination
