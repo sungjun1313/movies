@@ -44,13 +44,13 @@ class Container extends Component {
         loaded: true
       });
     }else{
-      /*
+
       if(result.detail){
         alert(result.detail);
       }else{
         alert('네트워크가 불안정합니다.');
       }
-      */
+
     }
   }
 
@@ -166,24 +166,38 @@ class Container extends Component {
         return <Loading />;
     }
 
+
     const {movie_list, page_count} = this.props;
     const page_info = queryString.parse(this.props.location.search);
 
+
     return (
       <div className={styles.container}>
-        <form onSubmit={this.handleSubmit}>
-          <input type="text" name="inputSearch" value={inputSearch} onChange={this.handleInputChange} onKeyDown={this.handleKeyDown} />
-          <Link to={inputSearch ? `/?page=1&search=${inputSearch}` : `/?page=1`} onClick={this.linkClick} ref={ref => {this.searchBtn = ref;}}>검색</Link>
-        </form>
+
+        {movie_list.length < 1
+          && <h3 style={{marginTop:"40px", textAlign:"center", fontWeight:"bold", margin:"auto"}}>존재하지 않습니다.</h3>
+        }
+
         {movie_list.map(movie => {
           return <MovieList {...movie} key={movie.id} movieBoxClick={() => {this.movieBoxClick(movie.id)}} />
         })}
 
-        <Pagination
-          page_count={page_count}
-          page_info={page_info}
-          pageBtnClick={this.pageBtnClick}
-        />
+        <form onSubmit={this.handleSubmit}>
+          <div>
+            <input type="text" name="inputSearch" value={inputSearch} onChange={this.handleInputChange} onKeyDown={this.handleKeyDown} />
+            <Link to={inputSearch ? `/?page=1&search=${inputSearch}` : `/?page=1`} onClick={this.linkClick} ref={ref => {this.searchBtn = ref;}}>검색</Link>
+          </div>
+        </form>
+
+        {page_count >= 0
+          && <Pagination
+              page_count={page_count}
+              page_info={page_info}
+              pageBtnClick={this.pageBtnClick}
+              settings_list_len = {6}
+              settings_num_btns = {3}
+              />
+        }
 
       </div>
     );

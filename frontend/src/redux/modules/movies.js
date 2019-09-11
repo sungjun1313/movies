@@ -57,11 +57,11 @@ function getMovieList(page, search){
     let defaultPage = 1;
     let defaultSearch = '';
     let url = '';
-    if(typeof Number(page) === 'number' && page > 0){
+    if(page){
       defaultPage = page;
     }
 
-    if(typeof search === 'string'){
+    if(search){
       defaultSearch = search;
     }
 

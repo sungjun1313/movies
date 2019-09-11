@@ -12,11 +12,14 @@
   width: 100%;
   /*margin: 10px auto;*/
   margin-bottom: 20px;
-  margin-left: 16%;
-  text-align: center;
+  text-align: right;
 }
 
-.container>form> a {
+.container>form>div {
+  padding-right: 10%;
+}
+
+.container>form>div>a {
   text-decoration: none;
   color: #ffffff;
   padding: 2px;
@@ -48,7 +51,7 @@
   box-shadow: 2px 2px 5px #555555;
 }
 
-@media all and (max-width: 1030px){
+@media all and (max-width: 1390px){
   .movieBox {
     width: 90%;
     margin: auto;
@@ -69,13 +72,10 @@
     height: 450px;
   }
 
-  .container>form {
-    margin-left: 0;
-  }
 
 }
 
-@media all and (max-width: 550px){
+@media all and (max-width: 630px){
   .movieBox img {
     height: 52%;
   }
@@ -84,12 +84,16 @@
     width: 100%;
   }
 
-  .movieBox>div>h3, .movieBox>div>div {
+  .movieBox>div>h3 {
+    text-align: center;
     margin: auto;
+  }
+
+  .movieBox>div>div {
     padding-left: 40px;
   }
 
-  .container>form>input {
-    width: 40%;
+  .container>form>div>input {
+    width: 50%;
   }
 }
