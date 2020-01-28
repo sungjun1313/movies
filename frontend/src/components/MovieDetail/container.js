@@ -27,7 +27,7 @@ class Container extends Component {
       story: PropTypes.string,
       average_grade: PropTypes.number,
       total_reviews: PropTypes.number,
-      cinema_id: PropTypes.arrayOf(
+      cinema_reviews: PropTypes.arrayOf(
         PropTypes.shape({
           id: PropTypes.number.isRequired,
           user: PropTypes.shape({
